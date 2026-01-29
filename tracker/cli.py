@@ -82,8 +82,25 @@ def run(logger):
             logger.info(f"add command success: {expense.id}")
 
         elif args.command == "list":
-            print("List command not implemented yet (next step).")
             logger.info("list command called")
+
+            from tracker.service import list_expenses  # import here to keep focus
+            expenses = list_expenses(data_file)
+
+            if not expenses:
+                print("No expenses found")
+                return
+
+            # Print header
+            print("ID | Date | Category | Amount | Note")
+            print("-" * 70)
+
+            # Print each expense
+            for e in expenses:
+                print(
+                    f"{e['id']} | {e['date']} | {e['category']} | "
+                    f"{e['amount']:.2f} {e['currency']} | {e['note']}"
+                )
 
         elif args.command == "summary":
             print("Summary command not implemented yet (next step).")
