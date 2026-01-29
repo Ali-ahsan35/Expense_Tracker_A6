@@ -4,6 +4,7 @@ from tracker.models import Expense
 from tracker.storage import load_expenses, save_expenses
 
 
+
 def _now_iso() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
@@ -58,3 +59,9 @@ def add_expense(data_file: str, date: str, category: str, amount: float, currenc
     save_expenses(data_file, expenses)
 
     return expense
+
+def list_expenses(data_file: str) -> list[dict]:
+    """
+    Returns all expenses from the JSON file.
+    """
+    return load_expenses(data_file)
