@@ -1,8 +1,13 @@
 from datetime import datetime, date as dt_date
 from tracker.models import Expense
 from tracker.storage import load_expenses, save_expenses
-from tracker.utils import filter_by_month, filter_by_date_range, filter_by_category,filter_by_amount_range
-
+from tracker.utils import (
+    filter_by_month,
+    filter_by_date_range,
+    filter_by_category,
+    filter_by_amount_range,
+    sort_expenses,
+)
 
 
 def _now_iso() -> str:
@@ -62,19 +67,24 @@ def add_expense(data_file: str, date: str, category: str, amount: float, currenc
 
 def list_expenses(
     data_file: str,
-    month: str | None = None,
-    date_from: str | None = None,
-    date_to: str | None = None,
-    category: str | None = None,
-    min_amount: float | None = None,
-    max_amount: float | None = None,
+    month=None,
+    date_from=None,
+    date_to=None,
+    category=None,
+    min_amount=None,
+    max_amount=None,
+    sort_by=None,
+    desc=False,
 ) -> list[dict]:
+
 
     expenses = load_expenses(data_file)
     expenses = filter_by_month(expenses, month)
     expenses = filter_by_date_range(expenses, date_from, date_to)
     expenses = filter_by_category(expenses, category)
     expenses = filter_by_amount_range(expenses, min_amount, max_amount)
+    expenses = sort_expenses(expenses, sort_by, desc)
+
     return expenses
 
 

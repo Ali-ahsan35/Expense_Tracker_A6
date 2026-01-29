@@ -122,3 +122,36 @@ def filter_by_amount_range(
     return filtered
 
 
+def sort_expenses(
+    expenses: list[dict],
+    sort_by: str | None,
+    desc: bool = False,
+) -> list[dict]:
+    """
+    Sort expenses by date, amount, or category.
+    """
+    if not sort_by:
+        return expenses
+
+    if sort_by == "date":
+        return sorted(
+            expenses,
+            key=lambda e: datetime.strptime(e["date"], "%Y-%m-%d"),
+            reverse=desc,
+        )
+
+    if sort_by == "amount":
+        return sorted(
+            expenses,
+            key=lambda e: float(e["amount"]),
+            reverse=desc,
+        )
+
+    if sort_by == "category":
+        return sorted(
+            expenses,
+            key=lambda e: e["category"],
+            reverse=desc,
+        )
+
+    raise ValueError("invalid sort option")

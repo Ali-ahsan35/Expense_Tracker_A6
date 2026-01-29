@@ -90,14 +90,16 @@ def run(logger):
             from tracker.service import list_expenses
 
             expenses = list_expenses(
-                        data_file,
-                        month=args.month,
-                        date_from=args.date_from,
-                        date_to=args.date_to,
-                        category=args.category,
-                        min_amount=args.min_amount,
-                        max_amount=args.max_amount,
-                    )
+                data_file,
+                month=args.month,
+                date_from=args.date_from,
+                date_to=args.date_to,
+                category=args.category,
+                min_amount=args.min_amount,
+                max_amount=args.max_amount,
+                sort_by=args.sort,
+                desc=args.desc,
+            )
 
 
             if not expenses:
