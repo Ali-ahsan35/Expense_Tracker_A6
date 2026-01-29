@@ -65,3 +65,25 @@ def list_expenses(data_file: str) -> list[dict]:
     Returns all expenses from the JSON file.
     """
     return load_expenses(data_file)
+
+def summary_expenses(data_file: str) -> dict:
+    """
+    Returns summary of count, grand_total, totals_by_category
+    """
+    expenses = load_expenses(data_file)
+
+    totals_by_category: dict[str, float] = {}
+    grand_total = 0.0
+
+    for e in expenses:
+        amount = float(e["amount"])
+        category = e["category"]
+
+        grand_total += amount
+        totals_by_category[category] = totals_by_category.get(category, 0.0) + amount
+
+    return {
+        "count": len(expenses),
+        "grand_total": grand_total,
+        "totals_by_category": totals_by_category,
+    }
