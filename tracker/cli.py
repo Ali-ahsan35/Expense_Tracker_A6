@@ -103,8 +103,26 @@ def run(logger):
                 )
 
         elif args.command == "summary":
-            print("Summary command not implemented yet (next step).")
             logger.info("summary command called")
+
+            from tracker.service import summary_expenses
+
+            result = summary_expenses(data_file, month=args.month)
+
+            if result["count"] == 0:
+                print("No expenses found")
+                return
+
+            print(f"Summary ({result['label']})")
+            print(f"Total expenses: {result['count']}")
+            print(f"Grand total: {result['grand_total']:.2f} {result['currency']}")
+            print()
+            print("By category:")
+
+            # nice consistent order (alphabetical)
+            for category in sorted(result["totals_by_category"].keys()):
+                total = result["totals_by_category"][category]
+                print(f"{category:<12} {total:.2f} {result['currency']}")
 
     except ValueError as e:
         print(f"Error: {e}")

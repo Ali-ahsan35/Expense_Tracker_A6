@@ -66,24 +66,47 @@ def list_expenses(data_file: str) -> list[dict]:
     """
     return load_expenses(data_file)
 
-def summary_expenses(data_file: str) -> dict:
+def summary_expenses(data_file: str, month: str | None = None) -> dict:
     """
-    Returns summary of count, grand_total, totals_by_category
+    Returns summary:
+    - count
+    - grand_total
+    - totals_by_category
+    - currency (single currency if consistent, else 'MIXED')
+    - label (e.g., '2026-01' or 'all')
     """
+
     expenses = load_expenses(data_file)
+
+    label = month if month else "all"
 
     totals_by_category: dict[str, float] = {}
     grand_total = 0.0
 
+    currencies = set()
+
     for e in expenses:
         amount = float(e["amount"])
         category = e["category"]
+        currency = e.get("currency", "BDT")
+
+        currencies.add(currency)
 
         grand_total += amount
         totals_by_category[category] = totals_by_category.get(category, 0.0) + amount
+
+    if len(currencies) == 1:
+        currency_display = currencies.pop()
+    elif len(currencies) == 0:
+        currency_display = "BDT"
+    else:
+        currency_display = "MIXED"
 
     return {
         "count": len(expenses),
         "grand_total": grand_total,
         "totals_by_category": totals_by_category,
+        "currency": currency_display,
+        "label": label,
     }
+
