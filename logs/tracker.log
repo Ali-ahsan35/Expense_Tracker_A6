@@ -5,3 +5,28 @@
 2026-01-27 18:45:36,803 - INFO - Expense Tracker started
 2026-01-27 18:48:03,751 - INFO - Expense Tracker started
 2026-01-27 18:48:18,952 - INFO - Expense Tracker started
+2026-01-28 15:51:27,737 - INFO - Expense Tracker started
+2026-01-28 19:00:52,753 - INFO - Expense Tracker started
+2026-01-28 19:00:52,759 - WARNING - validation/runtime error: data file is corrupted (invalid JSON)
+2026-01-28 19:01:23,777 - INFO - Expense Tracker started
+2026-01-28 19:01:23,783 - WARNING - validation/runtime error: data file is corrupted (invalid JSON)
+2026-01-28 19:07:13,338 - INFO - Expense Tracker started
+2026-01-28 19:07:13,343 - WARNING - validation/runtime error: data file is corrupted (invalid JSON)
+2026-01-28 19:07:41,530 - INFO - Expense Tracker started
+2026-01-28 19:07:41,536 - WARNING - validation/runtime error: data file is corrupted (invalid JSON)
+2026-01-28 19:12:27,950 - INFO - Expense Tracker started
+2026-01-28 19:12:27,955 - INFO - add command success: EXP-20260126-0001
+2026-01-28 19:13:25,082 - INFO - Expense Tracker started
+2026-01-28 19:13:25,090 - INFO - add command success: EXP-20260126-0002
+2026-01-28 19:14:46,722 - INFO - Expense Tracker started
+2026-01-28 19:14:46,727 - INFO - add command success: EXP-20260123-0003
+2026-01-28 19:15:01,902 - INFO - Expense Tracker started
+2026-01-28 19:15:01,907 - INFO - add command success: EXP-20260123-0004
+2026-01-28 19:16:23,479 - INFO - Expense Tracker started
+2026-01-28 19:16:23,485 - INFO - add command success: EXP-20260122-0001
+2026-01-29 10:30:34,120 - INFO - Expense Tracker started
+2026-01-29 10:30:34,126 - WARNING - validation/runtime error: date must be YYYY-MM-DD
+2026-01-29 10:30:45,048 - INFO - Expense Tracker started
+2026-01-29 10:30:45,053 - WARNING - validation/runtime error: amount must be > 0
+2026-01-29 10:38:02,160 - INFO - Expense Tracker started
+2026-01-29 10:38:02,163 - INFO - list command called
