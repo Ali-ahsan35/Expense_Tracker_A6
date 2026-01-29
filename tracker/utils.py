@@ -78,3 +78,14 @@ def filter_by_date_range(
 
     return filtered
 
+def filter_by_category(expenses: list[dict], category: str | None) -> list[dict]:
+    """
+    Filter expenses by exact category match (case-insensitive).
+    """
+    if not category:
+        return expenses
+
+    category = category.strip().lower()
+    return [e for e in expenses if e.get("category", "").lower() == category]
+
+

@@ -87,11 +87,13 @@ def run(logger):
             from tracker.service import list_expenses
 
             expenses = list_expenses(
-                data_file,
-                month=args.month,
-                date_from=args.date_from,
-                date_to=args.date_to,
-            )
+                        data_file,
+                        month=args.month,
+                        date_from=args.date_from,
+                        date_to=args.date_to,
+                        category=args.category,
+                    )
+
 
             if not expenses:
                 print("No expenses found")
@@ -114,11 +116,13 @@ def run(logger):
             from tracker.service import summary_expenses
 
             result = summary_expenses(
-                data_file,
-                month=args.month,
-                date_from=args.date_from,
-                date_to=args.date_to,
-            )
+                        data_file,
+                        month=args.month,
+                        date_from=args.date_from,
+                        date_to=args.date_to,
+                        category=args.category,
+                    )
+
 
 
             if result["count"] == 0:
