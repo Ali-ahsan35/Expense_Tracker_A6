@@ -84,30 +84,42 @@ def run(logger):
         elif args.command == "list":
             logger.info("list command called")
 
-            from tracker.service import list_expenses  # import here to keep focus
-            expenses = list_expenses(data_file)
+            from tracker.service import list_expenses
+
+            expenses = list_expenses(
+                data_file,
+                month=args.month,
+                date_from=args.date_from,
+                date_to=args.date_to,
+            )
 
             if not expenses:
                 print("No expenses found")
                 return
 
-            # Print header
             print("ID | Date | Category | Amount | Note")
             print("-" * 70)
 
-            # Print each expense
             for e in expenses:
                 print(
                     f"{e['id']} | {e['date']} | {e['category']} | "
                     f"{e['amount']:.2f} {e['currency']} | {e['note']}"
                 )
 
+
+
         elif args.command == "summary":
             logger.info("summary command called")
 
             from tracker.service import summary_expenses
 
-            result = summary_expenses(data_file, month=args.month)
+            result = summary_expenses(
+                data_file,
+                month=args.month,
+                date_from=args.date_from,
+                date_to=args.date_to,
+            )
+
 
             if result["count"] == 0:
                 print("No expenses found")

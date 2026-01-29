@@ -1,7 +1,7 @@
 from datetime import datetime, date as dt_date
-
 from tracker.models import Expense
 from tracker.storage import load_expenses, save_expenses
+from tracker.utils import filter_by_month, filter_by_date_range
 
 
 
@@ -60,29 +60,39 @@ def add_expense(data_file: str, date: str, category: str, amount: float, currenc
 
     return expense
 
-def list_expenses(data_file: str) -> list[dict]:
+def list_expenses(
+    data_file: str,
+    month: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+) -> list[dict]:
     """
-    Returns all expenses from the JSON file.
+    Returns expenses filtered by month and/or date range.
     """
-    return load_expenses(data_file)
-
-def summary_expenses(data_file: str, month: str | None = None) -> dict:
-    """
-    Returns summary:
-    - count
-    - grand_total
-    - totals_by_category
-    - currency (single currency if consistent, else 'MIXED')
-    - label (e.g., '2026-01' or 'all')
-    """
-
     expenses = load_expenses(data_file)
 
-    label = month if month else "all"
+    # filters
+    expenses = filter_by_month(expenses, month)
+    expenses = filter_by_date_range(expenses, date_from, date_to)
+
+    return expenses
+
+
+def summary_expenses(
+    data_file: str,
+    month: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+) -> dict:
+    expenses = load_expenses(data_file)
+
+    expenses = filter_by_month(expenses, month)
+    expenses = filter_by_date_range(expenses, date_from, date_to)
+
+    label = month if month else "custom range"
 
     totals_by_category: dict[str, float] = {}
     grand_total = 0.0
-
     currencies = set()
 
     for e in expenses:
@@ -91,16 +101,10 @@ def summary_expenses(data_file: str, month: str | None = None) -> dict:
         currency = e.get("currency", "BDT")
 
         currencies.add(currency)
-
         grand_total += amount
         totals_by_category[category] = totals_by_category.get(category, 0.0) + amount
 
-    if len(currencies) == 1:
-        currency_display = currencies.pop()
-    elif len(currencies) == 0:
-        currency_display = "BDT"
-    else:
-        currency_display = "MIXED"
+    currency_display = currencies.pop() if len(currencies) == 1 else "BDT"
 
     return {
         "count": len(expenses),
