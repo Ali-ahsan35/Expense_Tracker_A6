@@ -4,6 +4,7 @@ from datetime import date as dt_date
 
 from tracker.service import add_expense
 from tracker.utils import validate_date, validate_amount, normalize_category
+from tracker.storage import write_expenses_csv
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -84,6 +85,7 @@ def run(logger):
 
             logger.info(f"add command success: {expense.id}")
 
+        # List
         elif args.command == "list":
             logger.info("list command called")
 
@@ -102,9 +104,12 @@ def run(logger):
                 limit=args.limit,
             )
 
-
             if not expenses:
                 print("No expenses found")
+                return
+
+            if args.format == "csv":
+                write_expenses_csv(expenses)
                 return
 
             print("ID | Date | Category | Amount | Note")
@@ -145,10 +150,34 @@ def run(logger):
             print()
             print("By category:")
 
-            # nice consistent order (alphabetical)
             for category in sorted(result["totals_by_category"].keys()):
                 total = result["totals_by_category"][category]
                 print(f"{category:<12} {total:.2f} {result['currency']}")
+            print()
+            print("Highest expense")
+            he = result.get("highest_expense")
+            if he:
+                print(
+                    f"{he['date']} | {he['category']} | {float(he['amount']):.2f} {result['currency']} | {he.get('note','')}"
+                )
+            else:
+                print("N/A")
+            print()
+            print("Average per day in month")
+            if result.get("avg_per_day") is not None:
+                print(f"{result['avg_per_day']:.2f} {result['currency']} (over {result['days_in_month']} days)")
+            # is not None:
+            #     print(f"{result['avg_per_day']:.2f} {result['currency']} (over {result['days_in_month']} days)")
+            # else:
+            #     print("N/A (run with --month YYYY-MM)")
+            print()
+            print("Category percentage share")
+            if result["grand_total"] > 0:
+                for cat in sorted(result["category_percent"].keys()):
+                    pct = result["category_percent"][cat]
+                    print(f"{cat}: {pct:.2f}%")
+            else:
+                print("N/A")
 
     except ValueError as e:
         print(f"Error: {e}")

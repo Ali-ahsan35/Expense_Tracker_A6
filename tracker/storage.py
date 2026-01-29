@@ -1,6 +1,8 @@
 import json
 import os
 from json import JSONDecodeError
+import csv
+import sys
 
 
 def ensure_data_file(path: str) -> None:
@@ -38,3 +40,18 @@ def save_expenses(path: str, expenses: list[dict]) -> None:
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump({"version": 1, "expenses": expenses}, f, indent=2)
+
+def write_expenses_csv(expenses: list[dict]) -> None:
+    """
+    Print expenses as CSV to the terminal (stdout).
+    You can save it to a file using:
+    python -m tracker list --format csv > expenses.csv
+    """
+    fieldnames = ["id", "date", "category", "amount", "currency", "note", "created_at"]
+
+    writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for e in expenses:
+        writer.writerow(e)
+

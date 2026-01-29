@@ -1,5 +1,6 @@
-from datetime import datetime, date as dt_date
+from datetime import datetime,date
 from tracker.models import Expense
+import calendar
 from tracker.storage import load_expenses, save_expenses
 from tracker.utils import (
     filter_by_month,
@@ -95,7 +96,7 @@ def summary_expenses(
     month: str | None = None,
     date_from: str | None = None,
     date_to: str | None = None,
-     category: str | None = None,
+    category: str | None = None,
     min_amount: float | None = None,
     max_amount: float | None = None,
 ) -> dict:
@@ -106,29 +107,53 @@ def summary_expenses(
     expenses = filter_by_category(expenses, category)
     expenses = filter_by_amount_range(expenses, min_amount, max_amount)
 
-    # label = month if month else "custom range"
-    if month:
-        label = month
-    elif date_from or date_to:
-        label = f"{date_from or '...'} to {date_to or '...'}"
-    else:
-        label = "all"
-
+    # label
+    label = month if month else "all"
 
     totals_by_category: dict[str, float] = {}
     grand_total = 0.0
     currencies = set()
 
+    # bonus: highest expense
+    highest_expense = None  # will store a dict expense
+
     for e in expenses:
         amount = float(e["amount"])
-        category = e["category"]
-        currency = e.get("currency", "BDT")
+        cat = e["category"]
+        cur = e.get("currency", "BDT")
 
-        currencies.add(currency)
+        currencies.add(cur)
         grand_total += amount
-        totals_by_category[category] = totals_by_category.get(category, 0.0) + amount
+        totals_by_category[cat] = totals_by_category.get(cat, 0.0) + amount
+
+        if highest_expense is None or amount > float(highest_expense["amount"]):
+            highest_expense = e
 
     currency_display = currencies.pop() if len(currencies) == 1 else "BDT"
+
+    # bonus: average per day in month (only meaningful if month is provided)
+    avg_per_day = None
+    days_in_month = None
+    try:
+        if month:
+            # use provided month
+            y, m = map(int, month.split("-"))
+        else:
+            today = date.today()
+            y, m = today.year, today.month
+
+        days_in_month = calendar.monthrange(y, m)[1]
+        avg_per_day = (grand_total / days_in_month) if days_in_month else 0.0
+
+    except ValueError:
+        avg_per_day = None
+        days_in_month = None
+
+    #category percentage share
+    category_percent: dict[str, float] = {}
+    if grand_total > 0:
+        for cat, total in totals_by_category.items():
+            category_percent[cat] = (total / grand_total) * 100
 
     return {
         "count": len(expenses),
@@ -136,5 +161,9 @@ def summary_expenses(
         "totals_by_category": totals_by_category,
         "currency": currency_display,
         "label": label,
+        "highest_expense": highest_expense,
+        "avg_per_day": avg_per_day,
+        "days_in_month": days_in_month,
+        "category_percent": category_percent,
     }
 
