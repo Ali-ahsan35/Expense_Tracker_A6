@@ -7,6 +7,7 @@ from tracker.utils import (
     filter_by_category,
     filter_by_amount_range,
     sort_expenses,
+    apply_limit,
 )
 
 
@@ -16,29 +17,27 @@ def _now_iso() -> str:
 
 def _generate_id(expense_date: str, existing: list[dict]) -> str:
     """
-    ID format: EXP-YYYYMMDD-0001
-    Uses the last stored expense to generate next ID.
+    ID format: EXP-YYYYMMDD-XXXX
+    Sequence is GLOBAL and always increments.
     """
     yyyymmdd = expense_date.replace("-", "")
     prefix = f"EXP-{yyyymmdd}-"
 
-    if not existing:
-        return f"{prefix}0001"
+    max_number = 0
 
-    last_id = existing[-1].get("id", "")
+    for e in existing:
+        eid = e.get("id", "")
+        try:
+            # EXP-YYYYMMDD-0007 → take last part
+            number_part = int(eid.split("-")[-1])
+            if number_part > max_number:
+                max_number = number_part
+        except (IndexError, ValueError):
+            continue
 
-    try:
-        # last_date_part = last_id.split("-")[1]
-        last_number_part = last_id.split("-")[2]
-
-        
-        next_num = int(last_number_part) + 1
-
-    except (IndexError, ValueError):
-        # fallback if ID format is broken
-        next_num = 1
-
+    next_num = max_number + 1
     return f"{prefix}{next_num:04d}"
+
 
 
 def add_expense(data_file: str, date: str, category: str, amount: float, currency: str, note: str) -> Expense:
@@ -75,6 +74,7 @@ def list_expenses(
     max_amount=None,
     sort_by=None,
     desc=False,
+    limit=None,
 ) -> list[dict]:
 
 
@@ -84,6 +84,7 @@ def list_expenses(
     expenses = filter_by_category(expenses, category)
     expenses = filter_by_amount_range(expenses, min_amount, max_amount)
     expenses = sort_expenses(expenses, sort_by, desc)
+    expenses = apply_limit(expenses, limit)
 
     return expenses
 
@@ -105,7 +106,14 @@ def summary_expenses(
     expenses = filter_by_category(expenses, category)
     expenses = filter_by_amount_range(expenses, min_amount, max_amount)
 
-    label = month if month else "custom range"
+    # label = month if month else "custom range"
+    if month:
+        label = month
+    elif date_from or date_to:
+        label = f"{date_from or '...'} to {date_to or '...'}"
+    else:
+        label = "all"
+
 
     totals_by_category: dict[str, float] = {}
     grand_total = 0.0

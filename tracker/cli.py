@@ -99,6 +99,7 @@ def run(logger):
                 max_amount=args.max_amount,
                 sort_by=args.sort,
                 desc=args.desc,
+                limit=args.limit,
             )
 
 

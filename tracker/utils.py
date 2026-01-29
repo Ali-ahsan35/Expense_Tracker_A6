@@ -155,3 +155,16 @@ def sort_expenses(
         )
 
     raise ValueError("invalid sort option")
+
+def apply_limit(expenses: list[dict], limit: int | None) -> list[dict]:
+    """
+    Limit the number of expenses returned.
+    """
+    if limit is None:
+        return expenses
+
+    if limit <= 0:
+        raise ValueError("limit must be a positive integer")
+
+    return expenses[:limit]
+
