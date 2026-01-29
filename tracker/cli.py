@@ -40,6 +40,9 @@ def build_parser() -> argparse.ArgumentParser:
     summary_parser.add_argument("--from", dest="date_from", help="From date (YYYY-MM-DD)")
     summary_parser.add_argument("--to", dest="date_to", help="To date (YYYY-MM-DD)")
     summary_parser.add_argument("--category", help="Filter by category")
+    summary_parser.add_argument("--min", dest="min_amount", type=float, help="Minimum amount")
+    summary_parser.add_argument("--max", dest="max_amount", type=float, help="Maximum amount")
+
 
     return parser
 
@@ -92,6 +95,8 @@ def run(logger):
                         date_from=args.date_from,
                         date_to=args.date_to,
                         category=args.category,
+                        min_amount=args.min_amount,
+                        max_amount=args.max_amount,
                     )
 
 
@@ -109,7 +114,6 @@ def run(logger):
                 )
 
 
-
         elif args.command == "summary":
             logger.info("summary command called")
 
@@ -121,7 +125,10 @@ def run(logger):
                         date_from=args.date_from,
                         date_to=args.date_to,
                         category=args.category,
+                        min_amount=args.min_amount,
+                        max_amount=args.max_amount,
                     )
+
 
 
 

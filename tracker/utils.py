@@ -88,4 +88,37 @@ def filter_by_category(expenses: list[dict], category: str | None) -> list[dict]
     category = category.strip().lower()
     return [e for e in expenses if e.get("category", "").lower() == category]
 
+def filter_by_amount_range(
+    expenses: list[dict],
+    min_amount: float | None,
+    max_amount: float | None,
+) -> list[dict]:
+    """
+    Filter expenses by amount range (inclusive).
+    """
+    if min_amount is None and max_amount is None:
+        return expenses
+
+    if min_amount is not None and min_amount < 0:
+        raise ValueError("min amount must be >= 0")
+
+    if max_amount is not None and max_amount < 0:
+        raise ValueError("max amount must be >= 0")
+
+    if min_amount is not None and max_amount is not None and min_amount > max_amount:
+        raise ValueError("min amount cannot be greater than max amount")
+
+    filtered = []
+    for e in expenses:
+        amount = float(e.get("amount", 0))
+
+        if min_amount is not None and amount < min_amount:
+            continue
+        if max_amount is not None and amount > max_amount:
+            continue
+
+        filtered.append(e)
+
+    return filtered
+
 
