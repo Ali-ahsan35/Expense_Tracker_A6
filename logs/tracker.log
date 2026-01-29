@@ -30,3 +30,5 @@
 2026-01-29 10:30:45,053 - WARNING - validation/runtime error: amount must be > 0
 2026-01-29 10:38:02,160 - INFO - Expense Tracker started
 2026-01-29 10:38:02,163 - INFO - list command called
+2026-01-29 10:42:46,823 - INFO - Expense Tracker started
+2026-01-29 10:42:46,826 - INFO - list command called
